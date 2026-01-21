@@ -4,62 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Reviews | Grafix Admin</title>
+    <title>Customer Reviews | Grafix Admin</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800;900&display=swap" rel="stylesheet">
-    <style>
-        .admin-table-container {
-            max-width: 1200px;
-            margin: 100px auto;
-            background: var(--bg-card);
-            padding: 3rem;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 2rem;
-        }
-
-        th,
-        td {
-            text-align: left;
-            padding: 1.2rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        th {
-            color: var(--primary);
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-        }
-
-        tr:hover {
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        .interest-badge {
-            padding: 0.4rem 0.8rem;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .badge-interested {
-            background: rgba(99, 102, 241, 0.2);
-            color: #6366f1;
-        }
-
-        .badge-browsing {
-            background: rgba(244, 63, 94, 0.2);
-            color: #f43f5e;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
@@ -71,6 +19,7 @@
             <a href="/admin/reviews" class="active">Reviews</a>
             <a href="/admin/messages">Messages</a>
             <a href="/admin/blog">Blog</a>
+            <a href="/admin/subscribers">Subscribers</a>
             <form th:action="@{/logout}" method="post" style="display: inline;">
                 <button type="submit" class="btn"
                     style="padding: 0.5rem 1rem; font-size: 0.8rem; background: rgba(244, 63, 94, 0.1); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.2);">Logout</button>
@@ -78,50 +27,39 @@
         </div>
     </nav>
 
-    <div class="admin-table-container">
-        <h1>User Reviews & Interests</h1>
-        <p style="color: var(--text-muted);">Manage and view detailed feedback from your customers.</p>
+    <div class="section" style="padding-top: 8rem;">
+        <div class="section-content">
+            <h1>Product Reviews</h1>
+            <p style="color: var(--text-muted);">Moderate feedback submitted by your clients.</p>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>User</th>
-                    <th>Contact</th>
-                    <th>Interest</th>
-                    <th>Note</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="review : ${reviews}">
-                    <td th:text="${review.date}" style="white-space: nowrap;">2026-01-20</td>
-                    <td>
-                        <div style="font-weight: 600;" th:text="${review.name}">John Doe</div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted);" th:text="${review.email}">
-                            john@example.com</div>
-                    </td>
-                    <td>
-                        <div th:text="${review.contact}">+1 555-0000</div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted);" th:text="${review.address}">
-                            California, USA</div>
-                    </td>
-                    <td>
-                        <span class="interest-badge badge-interested" th:text="${review.interest}">Very
-                            Interested</span>
-                    </td>
-                    <td style="max-width: 300px;">
-                        <p style="font-size: 0.9rem;" th:text="${review.note}">This is a user feedback note.</p>
-                    </td>
-                    <td>
-                        <a th:href="@{'/admin/reviews/delete/' + ${review.id}}" class="btn"
-                            style="background: rgba(244, 63, 94, 0.1); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.2); padding: 0.4rem 0.8rem; font-size: 0.75rem;">Delete</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div th:if="${#lists.isEmpty(reviews)}" style="text-align: center; padding: 4rem; color: var(--text-muted);">
-            No reviews submitted yet.
+            <div class="grid" style="margin-top: 2rem;">
+                <div th:each="review : ${reviews}" class="card" style="position: relative;">
+                    <div style="display: flex; gap: 0.5rem; color: #fbbf24; margin-bottom: 1rem;">
+                        <i class="fas fa-star" th:each="i : ${#numbers.sequence(1, 5)}"></i>
+                    </div>
+                    <p th:text="${review.note}"
+                        style="font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem;">"Great service!"
+                    </p>
+                    <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1rem;">
+                        <h4 th:text="${review.name}" style="margin: 0;">User Name</h4>
+                        <p th:text="${review.interest}"
+                            style="font-size: 0.8rem; color: var(--primary); margin: 0.2rem 0;">Web Design</p>
+                    </div>
+
+                    <a th:href="@{'/admin/reviews/delete/' + ${review.id}}"
+                        onclick="return confirm('Delete this review?')"
+                        style="position: absolute; top: 1rem; right: 1rem; color: #f43f5e; opacity: 0.5; transition: 0.3s;"
+                        onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5">
+                        <i class="fas fa-times-circle" style="font-size: 1.2rem;"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(reviews)}"
+                style="text-align: center; padding: 5rem; color: var(--text-muted);">
+                <i class="fas fa-comment-slash" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                <p>No reviews have been submitted yet.</p>
+            </div>
         </div>
     </div>
 </body>

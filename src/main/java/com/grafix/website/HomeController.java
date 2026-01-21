@@ -50,12 +50,6 @@ public class HomeController {
         return "redirect:/?success=true";
     }
 
-    @GetMapping("/admin/reviews")
-    public String listReviews(org.springframework.ui.Model model) {
-        model.addAttribute("reviews", reviewService.getAllReviews());
-        return "admin-reviews";
-    }
-
     @GetMapping("/login")
     public String login() {
         return "login";

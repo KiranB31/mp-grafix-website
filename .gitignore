@@ -35,3 +35,12 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Application ###
+uploads/
+*.log
+application-local.properties
+
+### OS ###
+.DS_Store
+Thumbs.db

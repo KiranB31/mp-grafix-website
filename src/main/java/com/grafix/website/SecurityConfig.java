@@ -55,12 +55,22 @@ public class SecurityConfig {
 
         @Bean
         public UserDetailsService userDetailsService() {
-                return username -> adminRepository.findByUsername(username)
-                                .map(admin -> new User(
-                                                admin.getUsername(),
-                                                admin.getPassword(),
-                                                Collections.singletonList(new SimpleGrantedAuthority(
-                                                                admin.getRole() != null ? admin.getRole() : "ADMIN"))))
-                                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+                return username -> {
+                        System.out.println("Login attempt for username: " + username);
+                        return adminRepository.findByUsername(username)
+                                        .map(admin -> {
+                                                System.out.println("User found in DB: " + admin.getUsername()
+                                                                + " with role: " + admin.getRole());
+                                                return User.withUsername(admin.getUsername())
+                                                                .password(admin.getPassword())
+                                                                .authorities(admin.getRole() != null ? admin.getRole()
+                                                                                : "ADMIN")
+                                                                .build();
+                                        })
+                                        .orElseThrow(() -> {
+                                                System.out.println("User NOT found in DB: " + username);
+                                                return new UsernameNotFoundException("User not found: " + username);
+                                        });
+                };
         }
 }

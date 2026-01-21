@@ -100,10 +100,16 @@
                     <a href="/admin/subscribers" class="blog-link">View List</a>
                 </div>
                 <div class="stat-card">
-                    <i class="fas fa-inbox"></i>
-                    <h3>Contact Messages</h3>
-                    <p class="value" th:text="${messageCount}">0</p>
-                    <a href="/admin/messages" class="blog-link">Read Messages</a>
+                    <i class="fas fa-users"></i>
+                    <h3>Creative Staff</h3>
+                    <p class="value" th:text="${staffCount}">0</p>
+                    <a href="/admin/staff" class="blog-link">Manage Team</a>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-cogs"></i>
+                    <h3>Studio Info</h3>
+                    <p class="value"><i class="fas fa-check-circle" style="color: #10b981; font-size: 2rem;"></i></p>
+                    <a href="/admin/settings" class="blog-link">Update Details</a>
                 </div>
             </div>
         </div>

@@ -2,20 +2,22 @@
 
 -- Business Information
 CREATE TABLE business_info (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    company_name VARCHAR(100) DEFAULT 'Grafix',
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    studio_name VARCHAR(100),
+    tag_line VARCHAR(200),
+    about_description TEXT,
     owner_name VARCHAR(100),
-    address TEXT,
-    email VARCHAR(100),
-    phone VARCHAR(20),
-    philosophy TEXT,
-    vision TEXT,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    contact_email VARCHAR(100),
+    contact_phone VARCHAR(50),
+    address VARCHAR(255),
+    facebook_url VARCHAR(255),
+    instagram_url VARCHAR(255),
+    twitter_url VARCHAR(255)
 );
 
 -- Admin Users
 CREATE TABLE admins (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     full_name VARCHAR(100),
@@ -25,7 +27,7 @@ CREATE TABLE admins (
 
 -- Products
 CREATE TABLE products (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     price VARCHAR(20) NOT NULL,
     description TEXT,
@@ -36,7 +38,7 @@ CREATE TABLE products (
 
 -- Blog Posts
 CREATE TABLE blog_posts (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
     image_url TEXT,
@@ -46,7 +48,7 @@ CREATE TABLE blog_posts (
 
 -- Staff Members
 CREATE TABLE staff (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     role VARCHAR(100) NOT NULL,
     image_url TEXT,
@@ -56,7 +58,7 @@ CREATE TABLE staff (
 
 -- Visitor Logs
 CREATE TABLE visitor_logs (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     visitor_ip VARCHAR(45),
     user_agent TEXT,
     visited_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -64,7 +66,7 @@ CREATE TABLE visitor_logs (
 
 -- Contact Messages
 CREATE TABLE contact_messages (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100),
     email VARCHAR(100),
     message TEXT,
@@ -72,5 +74,9 @@ CREATE TABLE contact_messages (
 );
 
 -- Initial Data
-INSERT INTO business_info (company_name, email, phone) 
-VALUES ('Grafix', 'hello@grafix.com', '+1 (555) 123-4567');
+INSERT INTO business_info (studio_name, tag_line, about_description, owner_name, contact_email, contact_phone, address) 
+VALUES ('GRAFIX STUDIO', 'Crafting Digital Excellence', 'We are a premier creative studio dedicated to making your vision a reality.', 'John Doe', 'hello@grafix.com', '+1 234 567 890', '123 Creative Street, Design City');
+
+INSERT INTO staff (name, role, bio, image_url)
+VALUES ('Alex Rivera', 'Creative Director', 'Passionate about minimalist design and bold typography.', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d'),
+       ('Sarah Jenkins', 'Lead Developer', 'Coding master with a love for clean architecture.', 'https://images.unsplash.com/photo-1494790108377-be9c29b29330');
