@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login | Grafix</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800;900&display=swap" rel="stylesheet">
     <style>
         .login-container {
@@ -27,7 +27,8 @@
             margin-bottom: 1.5rem;
         }
 
-        .error-msg {
+        #error-msg {
+            display: none;
             background: rgba(244, 63, 94, 0.1);
             color: #f43f5e;
             padding: 1rem;
@@ -44,15 +45,15 @@
         <h1>Portal Access</h1>
         <p style="color: var(--text-muted);">Please enter your credentials to manage the studio.</p>
 
-        <form th:action="@{/login}" method="post" class="login-form">
-            <div th:if="${param.error}" class="error-msg">
+        <form onsubmit="handleLogin(event)" class="login-form">
+            <div id="error-msg">
                 Invalid username or password. Please try again.
             </div>
 
             <div class="form-group">
                 <label
                     style="color: var(--text-muted); font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Username</label>
-                <input type="text" name="username"
+                <input type="text" id="username"
                     style="width: 100%; padding: 1rem; background: rgba(15,23,42,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white;"
                     required>
             </div>
@@ -60,7 +61,7 @@
             <div class="form-group">
                 <label
                     style="color: var(--text-muted); font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">Password</label>
-                <input type="password" name="password"
+                <input type="password" id="password"
                     style="width: 100%; padding: 1rem; background: rgba(15,23,42,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white;"
                     required>
             </div>
@@ -73,6 +74,22 @@
             style="display: block; margin-top: 2rem; color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">&larr;
             Back to Website</a>
     </div>
+
+    <script>
+        function handleLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+
+            // Simplified login for Vercel demonstration
+            // In a real app, you would verify this against a secure backend/API
+            if (user === 'admin' && pass === 'admin') {
+                window.location.href = '/admin/dashboard';
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+    </script>
 </body>
 
 </html>
