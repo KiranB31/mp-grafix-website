@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Collection | Grafix</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -34,16 +34,9 @@
 
     <section class="section section-alt">
         <div class="section-content">
-            <div class="grid">
-                <div th:each="product : ${products}" class="card animate">
-                    <img th:src="${product.imageUrl}" th:alt="${product.name}">
-                    <h3 th:text="${product.name}">Executive Gold</h3>
-                    <p th:text="${product.description}"></p>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
-                        <span th:text="${product.price}" style="font-weight: 800; color: var(--primary);">$199.00</span>
-                        <button class="btn btn-primary">Add to Cart</button>
-                    </div>
-                </div>
+            <div id="products-grid" class="grid">
+                <!-- Products will be loaded here via JS -->
+                <p style="text-align: center; color: var(--text-muted); grid-column: 1/-1;">Loading assets...</p>
             </div>
         </div>
     </section>
@@ -55,20 +48,32 @@
                 <p style="color: var(--text-muted);">Expanding the reach of creativity through premium design solutions.
                 </p>
             </div>
-            <div>
-                <h4 style="margin-bottom: 1.5rem;">Quick Links</h4>
-                <div style="display: flex; flex-direction: column; gap: 0.8rem;">
-                    <a href="/" style="color: var(--text-muted); text-decoration: none;">Home</a>
-                    <a href="/products" style="color: var(--text-muted); text-decoration: none;">Products</a>
-                    <a href="/blog" style="color: var(--text-muted); text-decoration: none;">Blog</a>
-                </div>
-            </div>
-            <div>
-                <h4 style="margin-bottom: 1.5rem;">Contact Info</h4>
-                <p style="color: var(--text-muted);">hello@grafix.com<br>+1 (555) 123-4567<br>123 Design Street, CA</p>
-            </div>
         </div>
     </footer>
+
+    <script>
+        async function loadProducts() {
+            try {
+                const res = await fetch('/products.json');
+                const products = await res.json();
+                const grid = document.getElementById('products-grid');
+                grid.innerHTML = products.map(product => `
+                    <div class="card animate">
+                        <img src="${product.imageUrl}" alt="${product.name}">
+                        <h3>${product.name}</h3>
+                        <p>${product.description}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                            <span style="font-weight: 800; color: var(--primary);">${product.price}</span>
+                            <a href="/contact" class="btn btn-primary">Inquire</a>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        loadProducts();
+    </script>
 </body>
 
 </html>
