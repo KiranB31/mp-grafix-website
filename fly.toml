@@ -1,0 +1,30 @@
+# Fly.io Configuration
+app = "grafix-website"
+primary_region = "sin"  # Singapore - change to your preferred region
+
+[build]
+  [build.args]
+    GRADLE_ARGS = "clean build -x test"
+
+[env]
+  SPRING_PROFILES_ACTIVE = "prod"
+  PORT = "8080"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+  
+  [[http_service.checks]]
+    grace_period = "30s"
+    interval = "15s"
+    method = "GET"
+    timeout = "5s"
+    path = "/actuator/health"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 512
