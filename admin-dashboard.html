@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | Grafix Admin</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -58,56 +58,78 @@
             <a href="/" style="color: var(--text-muted);">View Site</a>
             <a href="/admin/dashboard" class="active">Dashboard</a>
             <a href="/admin/products">Products</a>
-            <a href="/admin/reviews">Reviews</a>
-            <a href="/admin/messages">Messages</a>
-            <a href="/admin/blog">Blog</a>
-            <a href="/admin/subscribers">Subscribers</a>
-            <form th:action="@{/logout}" method="post" style="display: inline;">
-                <button type="submit" class="btn"
-                    style="padding: 0.5rem 1rem; font-size: 0.8rem; background: rgba(244, 63, 94, 0.1); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.2);">Logout</button>
-            </form>
+            <a href="/admin/profile">Settings</a>
+            <button onclick="logout()" class="btn"
+                style="padding: 0.5rem 1rem; font-size: 0.8rem; background: rgba(244, 63, 94, 0.1); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.2);">Logout</button>
         </div>
     </nav>
 
     <div class="section" style="padding-top: 8rem;">
         <div class="section-content animate">
-            <h1>Studio Overview</h1>
+            <h1 id="welcome-msg">Studio Overview</h1>
             <p style="color: var(--text-muted);">Real-time metrics for your creative ecosystem.</p>
 
             <div class="dashboard-grid">
                 <div class="stat-card">
                     <i class="fas fa-boxes"></i>
                     <h3>Digital Assets</h3>
-                    <p class="value" th:text="${productCount}">0</p>
+                    <p id="productCount" class="value">0</p>
                     <a href="/admin/products" class="blog-link">Manage Items</a>
-                </div>
-                <div class="stat-card">
-                    <i class="fas fa-comment-alt"></i>
-                    <h3>User Reviews</h3>
-                    <p class="value" th:text="${reviewCount}">0</p>
-                    <a href="/admin/reviews" class="blog-link">View Feedback</a>
-                </div>
-                <div class="stat-card">
-                    <i class="fas fa-newspaper"></i>
-                    <h3>Blog Posts</h3>
-                    <p class="value" th:text="${postCount}">0</p>
-                    <a href="/admin/blog" class="blog-link">Edit Stories</a>
-                </div>
-                <div class="stat-card">
-                    <i class="fas fa-envelope"></i>
-                    <h3>Mailing List</h3>
-                    <p class="value" th:text="${subscriberCount}">0</p>
-                    <a href="/admin/subscribers" class="blog-link">View List</a>
                 </div>
                 <div class="stat-card">
                     <i class="fas fa-inbox"></i>
                     <h3>Contact Messages</h3>
-                    <p class="value" th:text="${messageCount}">0</p>
+                    <p id="messageCount" class="value">0</p>
                     <a href="/admin/messages" class="blog-link">Read Messages</a>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-users"></i>
+                    <h3>Total Visits</h3>
+                    <p id="visitorCount" class="value">0</p>
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">Stored in Visitor Logs</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-cog"></i>
+                    <h3>Settings</h3>
+                    <p class="value" style="font-size: 1.5rem;">Update Info</p>
+                    <a href="/admin/profile" class="blog-link">Edit Business Profile</a>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        // Auth/Session Check
+        const user = JSON.parse(localStorage.getItem('admin_user'));
+        if (!localStorage.getItem('admin_token')) {
+            window.location.href = '/login';
+        } else if (user) {
+            document.getElementById('welcome-msg').innerText = `Welcome, ${user.fullName || 'Admin'}`;
+        }
+
+        function logout() {
+            localStorage.removeItem('admin_token');
+            localStorage.removeItem('admin_user');
+            window.location.href = '/login';
+        }
+
+        // Fetch Stats
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/admin/stats', {
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('admin_token') }
+                });
+                const stats = await res.json();
+
+                document.getElementById('productCount').innerText = stats.productCount;
+                document.getElementById('messageCount').innerText = stats.messageCount;
+                document.getElementById('visitorCount').innerText = stats.visitorCount;
+            } catch (err) {
+                console.error('Stats load error:', err);
+            }
+        }
+        loadStats();
+    </script>
 </body>
 
 </html>

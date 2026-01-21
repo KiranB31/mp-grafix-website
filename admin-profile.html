@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Profile | Grafix Admin</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <nav>
+        <div class="logo">GRAFIX. ADMIN</div>
+        <div class="nav-links">
+            <a href="/" style="color: var(--text-muted);">View Site</a>
+            <a href="/admin/dashboard">Dashboard</a>
+            <a href="/admin/products">Products</a>
+            <a href="/admin/profile" class="active">Settings</a>
+            <button onclick="logout()" class="btn"
+                style="padding: 0.5rem 1rem; font-size: 0.8rem; background: rgba(244, 63, 94, 0.1); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.2);">Logout</button>
+        </div>
+    </nav>
+
+    <div class="section" style="padding-top: 8rem;">
+        <div class="section-content animate">
+            <h1>Business Settings</h1>
+            <p style="color: var(--text-muted); margin-bottom: 3rem;">Manage your studio's public information and
+                contact details.</p>
+
+            <form id="profileForm"
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; background: var(--bg-card); padding: 3rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.05);">
+                <div class="form-group">
+                    <label>Studio Name</label>
+                    <input type="text" id="company_name" required
+                        style="width: 100%; padding: 1rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white;">
+                </div>
+                <div class="form-group">
+                    <label>Inquiry Email</label>
+                    <input type="email" id="email" required
+                        style="width: 100%; padding: 1rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white;">
+                </div>
+                <div class="form-group">
+                    <label>Contact Phone</label>
+                    <input type="text" id="phone"
+                        style="width: 100%; padding: 1rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white;">
+                </div>
+                <div class="form-group">
+                    <label>Studio Address</label>
+                    <input type="text" id="address"
+                        style="width: 100%; padding: 1rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white;">
+                </div>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label>Studio Philosophy</label>
+                    <textarea id="philosophy" rows="4"
+                        style="width: 100%; padding: 1rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white;"></textarea>
+                </div>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label>Future Vision</label>
+                    <textarea id="vision" rows="4"
+                        style="width: 100%; padding: 1rem; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white;"></textarea>
+                </div>
+                <div style="grid-column: span 2;">
+                    <button type="submit" class="btn btn-primary" style="padding: 1rem 3rem;">Save Changes</button>
+                    <span id="saveStatus" style="margin-left: 1rem; font-size: 0.9rem;"></span>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Auth Check
+        if (!localStorage.getItem('admin_token')) {
+            window.location.href = '/login';
+        }
+
+        function logout() {
+            localStorage.removeItem('admin_token');
+            localStorage.removeItem('admin_user');
+            window.location.href = '/login';
+        }
+
+        // Load Initial Data
+        async function loadProfile() {
+            const res = await fetch('/api/business');
+            const data = await res.json();
+
+            document.getElementById('company_name').value = data.company_name || '';
+            document.getElementById('email').value = data.email || '';
+            document.getElementById('phone').value = data.phone || '';
+            document.getElementById('address').value = data.address || '';
+            document.getElementById('philosophy').value = data.philosophy || '';
+            document.getElementById('vision').value = data.vision || '';
+        }
+
+        document.getElementById('profileForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const status = document.getElementById('saveStatus');
+            status.innerText = 'Saving...';
+            status.style.color = 'var(--primary)';
+
+            const formData = {
+                company_name: document.getElementById('company_name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                philosophy: document.getElementById('philosophy').value,
+                vision: document.getElementById('vision').value
+            };
+
+            try {
+                const res = await fetch('/api/business', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('admin_token')
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (res.ok) {
+                    status.innerText = 'Settings updated successfully!';
+                    status.style.color = '#10b981';
+                } else {
+                    throw new Error('Update failed');
+                }
+            } catch (err) {
+                status.innerText = 'Error saving settings.';
+                status.style.color = '#f43f5e';
+            }
+        };
+
+        loadProfile();
+    </script>
+</body>
+
+</html>

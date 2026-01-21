@@ -48,6 +48,10 @@
         {
             "source": "/admin/subscribers",
             "destination": "/admin-subscribers.html"
+        },
+        {
+            "source": "/admin/profile",
+            "destination": "/admin-profile.html"
         }
     ]
 }
