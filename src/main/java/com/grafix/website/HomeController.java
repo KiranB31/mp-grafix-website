@@ -3,7 +3,6 @@ package com.grafix.website;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-import java.util.UUID;
 
 @Controller
 public class HomeController {
@@ -47,7 +46,7 @@ public class HomeController {
 
     @org.springframework.web.bind.annotation.PostMapping("/reviews/add")
     public String addReview(@org.springframework.web.bind.annotation.ModelAttribute Review review) {
-        reviewService.addReview(review);
+        reviewService.saveReview(review);
         return "redirect:/?success=true";
     }
 
@@ -87,7 +86,7 @@ public class HomeController {
 
     @PostMapping("/contact")
     public String submitContact(@ModelAttribute ContactMessage contactMessage) {
-        contactService.addMessage(contactMessage);
+        contactService.saveMessage(contactMessage);
         return "redirect:/contact?success=true";
     }
 }

@@ -47,7 +47,7 @@ public class AdminController {
     }
 
     @GetMapping("/reviews/delete/{id}")
-    public String deleteReview(@PathVariable String id) {
+    public String deleteReview(@PathVariable Long id) {
         reviewService.deleteReview(id);
         return "redirect:/admin/reviews";
     }
@@ -60,7 +60,7 @@ public class AdminController {
     }
 
     @GetMapping("/products/delete/{id}")
-    public String deleteProduct(@PathVariable String id) {
+    public String deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return "redirect:/admin/products";
     }
@@ -119,7 +119,7 @@ public class AdminController {
     }
 
     @GetMapping("/blog/delete/{id}")
-    public String deleteBlogPost(@PathVariable String id) {
+    public String deleteBlogPost(@PathVariable Long id) {
         blogService.deletePost(id);
         return "redirect:/admin/blog";
     }
@@ -131,7 +131,7 @@ public class AdminController {
     }
 
     @GetMapping("/messages/delete/{id}")
-    public String deleteMessage(@PathVariable String id) {
+    public String deleteMessage(@PathVariable Long id) {
         contactService.deleteMessage(id);
         return "redirect:/admin/messages";
     }

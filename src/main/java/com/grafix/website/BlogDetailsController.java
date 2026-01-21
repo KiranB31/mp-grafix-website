@@ -15,11 +15,8 @@ public class BlogDetailsController {
     }
 
     @GetMapping("/blog/{id}")
-    public String blogDetails(@PathVariable String id, Model model) {
-        BlogPost post = blogService.getAllPosts().stream()
-                .filter(p -> p.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+    public String blogDetails(@PathVariable Long id, Model model) {
+        BlogPost post = blogService.getPostById(id);
 
         if (post == null) {
             return "redirect:/blog";
