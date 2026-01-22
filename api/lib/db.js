@@ -1,21 +1,20 @@
-const mysql = require('mysql2/promise');
+try { require('dotenv').config(); } catch (e) {}
 
-// Use environment variables for security on Vercel
-const dbConfig = {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    ssl: {
-        rejectUnauthorized: false // Often required for cloud DBs
-    }
-};
+const { Pool } = require('pg');
 
-let pool;
+// Use prod first, fallback to local
+const connectionString =
+  process.env.DATABASE_URL || process.env.POSTGRES_URL;
 
-export async function getDb() {
-    if (!pool) {
-        pool = mysql.createPool(dbConfig);
-    }
-    return pool;
+if (!connectionString) {
+  throw new Error("No database connection string found");
 }
+
+const isLocal = connectionString.includes("localhost");
+
+const pool = new Pool({
+  connectionString,
+  ssl: isLocal ? false : { rejectUnauthorized: false }
+});
+
+module.exports = pool;
