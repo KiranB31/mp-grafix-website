@@ -1,22 +1,9 @@
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const { getDb } = require('./lib/db');
+const { v4: uuidv4 } = require('uuid');
 
-// Ensure uploads directory exists
-const uploadDir = path.join(process.cwd(), 'uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
-}
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, uploadDir);
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, 'product-' + uniqueSuffix + path.extname(file.originalname));
-    }
-});
+// Use Memory Storage to get the buffer
+const storage = multer.memoryStorage();
 
 const upload = multer({
     storage: storage,
@@ -30,27 +17,32 @@ const upload = multer({
     }
 }).single('file');
 
-module.exports = (req, res) => {
-    // Wrap multer in a promise-compatible way for the handler
-    upload(req, res, function (err) {
-        if (err instanceof multer.MulterError) {
-            return res.status(400).json({ error: err.message });
-        } else if (err) {
-            return res.status(500).json({ error: err.message });
+module.exports = async (req, res) => {
+    upload(req, res, async function (err) {
+        if (err) return res.status(400).json({ error: err.message });
+        if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+
+        try {
+            const db = await getDb();
+            const id = uuidv4();
+
+            // Insert into DB
+            await db.query(
+                'INSERT INTO stored_images (id, data, mime_type, filename) VALUES ($1, $2, $3, $4)',
+                [id, req.file.buffer, req.file.mimetype, req.file.originalname]
+            );
+
+            // Return URL that points to our new image serving endpoint
+            const fileUrl = `/api/image?id=${id}`;
+
+            return res.status(200).json({
+                success: true,
+                url: fileUrl,
+                filename: req.file.originalname
+            });
+        } catch (dbErr) {
+            console.error('Database Upload Error:', dbErr);
+            return res.status(500).json({ error: 'Failed to save image to database' });
         }
-
-        if (!req.file) {
-            return res.status(400).json({ error: 'No file uploaded' });
-        }
-
-        // Return the absolute path or relative path depending on how you serve it
-        // Since local-server serves root, /uploads/filename is correct
-        const fileUrl = `/uploads/${req.file.filename}`;
-
-        return res.status(200).json({
-            success: true,
-            url: fileUrl,
-            filename: req.file.filename
-        });
     });
 };
